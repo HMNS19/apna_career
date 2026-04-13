@@ -110,6 +110,8 @@ This ensures:
 
 ## 2. Adaptive Quiz Engine (Stage 2 Core)
 
+Works on **Bayesian Knowledge Tracing (BKT)** to dynamically estimate student knowledge and adapt question flow.
+
 ### Domain Space
 
 - DSA
@@ -141,27 +143,106 @@ Each question is tagged with:
 
 ---
 
-### Question Flow Controller
+## **Adaptive Workflow Controller**
 
-#### Phase 1: Broad Filtering
+### Phase 1: Domain Screening
 
-- 1–2 MCQs per domain
-- Medium difficulty
-- Goal: eliminate weak domains
+- 4 domains × 4–5 questions each
+- Mixed subjects within each domain
+- Difficulty: Basic (Bloom L1–L2)
 
-#### Phase 2: Domain Shortlisting
+**Goal:**
 
-Select top 2–3 domains based on:
+- Identify foundational knowledge across all domains
+- Establish initial performance baseline
 
-- Quiz performance
-- Personality priors
+---
 
-#### Phase 3: Deep Evaluation
+### Phase 2: Domain Ranking & Selection
 
-- Focus only on shortlisted domains
-- Use:
-  - MCQs (Apply level)
-  - Subjective (Analyze level)
+- Score each domain individually
+- Rank domains based on performance
+- Select top 3 domains
+
+**Goal:**
+
+- Eliminate weaker domains
+- Focus assessment on stronger areas
+
+---
+
+### Phase 3: Adaptive Domain Expansion
+
+- Dynamically adjust number of questions per domain
+- If performance is strong → increase depth
+- If performance is weak → reduce or stop
+
+- Difficulty: Intermediate (Bloom L3–L4)
+
+**Goal:**
+
+- Explore depth of understanding
+- Optimize question count using adaptive logic
+
+---
+
+### Phase 4: Domain Narrowing
+
+- Re-evaluate performance after expansion
+- Select top 2 domains
+
+**Goal:**
+
+- Further refine focus areas
+- Move towards specialization
+
+---
+
+### Phase 5: Advanced Domain Evaluation
+
+- Case-based and complex problem-solving questions
+- Difficulty: High (Bloom L4–L5)
+
+**Goal:**
+
+- Assess analytical and decision-making skills
+- Evaluate real-world problem-solving ability
+
+---
+
+### Phase 6: Final Domain Selection
+
+- Identify the best-performing domain
+
+**Goal:**
+
+- Determine strongest area of competence
+
+---
+
+### Phase 7: Domain Mastery Assessment
+
+- Design-oriented / open-ended questions
+- Real-world scenarios
+- Difficulty: Highest (Bloom L6)
+
+**Goal:**
+
+- Evaluate creativity and system design ability
+- Assess engineering thinking at mastery level
+
+---
+
+### Phase 8: Final Output Generation
+
+- Best domain identified
+- Skill depth level (based on Bloom’s levels)
+- Mapping to Washington Accord attributes
+
+**Goal:**
+
+- Provide a complete competency profile
+- Enable targeted career guidance
 
 ---
 
@@ -248,7 +329,7 @@ Rules:
 - Binary correctness
 - Fast scoring
 
-### Subjective Evaluator (LLM-based)
+### Subjective Evaluator (LLM-based- Gemini API)
 
 Evaluates:
 

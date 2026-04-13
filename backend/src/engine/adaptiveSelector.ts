@@ -1,76 +1,84 @@
-import { Question, BeliefState, Domain } from '../types';
+import { Question, BeliefState, Domain, QuizPhase, BloomLevel } from '../types';
 
 /**
- * Adaptive Question Selector Engine
+ * Advanced Adaptive Question Selector Engine
  * 
- * Responsible for selecting the next best question based on current beliefs,
- * performance, and Bloom's level progression.
+ * Works purely on the Phase -> Domain Restriction -> BKT mapping.
  */
 
-interface SelectorContext {
+export interface SelectorContext {
     askedQuestionIds: Set<string>;
     beliefs: BeliefState[];
     latestIsCorrect: boolean;
     lastQuestion: Question | null;
+    phase: QuizPhase;
+    activeDomains: Domain[];
 }
 
-export function selectNextQuestion(
-    questionBank: Question[],
-    context: SelectorContext,
-    shortlistedDomains: Domain[]
-): Question | null {
-    // Filter out already asked
-    let available = questionBank.filter(q => !context.askedQuestionIds.has(q.id));
+// Helper to determine active Bloom pool per Phase
+function getValidBloomLevels(phase: QuizPhase): BloomLevel[] {
+    switch (phase) {
+        case 'Screening': return ['Remember', 'Understand']; // L1-L2
+        case 'Expansion': return ['Apply', 'Analyze']; // L3-L4
+        case 'Advanced': return ['Analyze', 'Evaluate']; // L4-L5
+        case 'Mastery': return ['Evaluate', 'Create']; // L6
+    }
+}
+
+// BKT driven heuristic: We look for questions matching a belief window, or fallback to constraints.
+export function selectNextQuestion(questionBank: Question[], context: SelectorContext): Question | null {
+    // 1. Filter out seen questions and non-active domains
+    let available = questionBank
+        .filter(q => !context.askedQuestionIds.has(q.id))
+        .filter(q => context.activeDomains.includes(q.domain));
 
     if (available.length === 0) return null;
 
-    // Filter to shortlisted domains
-    if (shortlistedDomains.length > 0) {
-        available = available.filter(q => shortlistedDomains.includes(q.domain));
-    }
+    // 2. Filter by phase-allowed Bloom Levels
+    const allowedBlooms = getValidBloomLevels(context.phase);
+    let phaseFiltered = available.filter(q => allowedBlooms.includes(q.bloomLevel));
 
-    // If no last question (first time), pick medium MCQ from prioritized domain
+    // Fallback if not enough questions meet the strict Bloom criteria for this phase
+    if (phaseFiltered.length === 0) phaseFiltered = available;
+
+    // 3. Selection based on Adaptive Logic (Performance & BKT)
+    // If there's no last question, just pick a baseline question for the current limits
     if (!context.lastQuestion) {
-        const firstQ = available.find(q => q.difficulty === 'Medium' && q.type === 'MCQ');
-        return firstQ || available[0];
+        return phaseFiltered[0]; // Could shuffle or pick lowest difficulty
     }
 
-    const { difficulty, bloomLevel, concept } = context.lastQuestion;
-
-    // Decide next Bloom's level & Difficulty
+    const { difficulty, concept } = context.lastQuestion;
     let targetDifficulty = difficulty;
-    let targetBloom = bloomLevel;
 
+    // React to previous answer correctness (escalate/de-escalate)
     if (context.latestIsCorrect) {
-        // Escalate
         if (difficulty === 'Easy') targetDifficulty = 'Medium';
         else if (difficulty === 'Medium') targetDifficulty = 'Hard';
-
-        if (bloomLevel === 'Understand') targetBloom = 'Apply';
-        else if (bloomLevel === 'Apply') targetBloom = 'Analyze';
     } else {
-        // De-escalate or repeat concept
         if (difficulty === 'Hard') targetDifficulty = 'Medium';
         else if (difficulty === 'Medium') targetDifficulty = 'Easy';
     }
 
-    // Attempt to find a question matching target criteria
-    let candidates = available.filter(q =>
-        (context.latestIsCorrect ? q.concept !== concept : q.concept === concept) &&
-        q.difficulty === targetDifficulty &&
-        q.bloomLevel === targetBloom
-    );
+    // 4. BKT Influence - Find concepts where belief is uncertain (0.3 to 0.7) to maximize information gain
+    let uncertainConcepts = context.beliefs
+        .filter(b => b.conceptType === 'Concept' && b.probability > 0.3 && b.probability < 0.7)
+        .map(b => b.concept);
 
-    if (candidates.length === 0) {
-        // Relax Bloom's level constraint
-        candidates = available.filter(q => q.difficulty === targetDifficulty);
+    let candidates = phaseFiltered.filter(q => q.difficulty === targetDifficulty);
+
+    // If latest was uncertain/incorrect, prefer re-testing the concept or uncertain ones
+    if (!context.latestIsCorrect) {
+        const conceptCandidates = candidates.filter(q => q.concept === concept || uncertainConcepts.includes(q.concept));
+        if (conceptCandidates.length > 0) candidates = conceptCandidates;
+    } else {
+        // Correct answer -> move to under-tested or new concepts
+        const newConcepts = candidates.filter(q => q.concept !== concept);
+        if (newConcepts.length > 0) candidates = newConcepts;
     }
 
-    if (candidates.length === 0) {
-        // Keep asking anything available from shortlisted domains
-        candidates = available;
-    }
+    // Fallback chain
+    if (candidates.length === 0) candidates = phaseFiltered.filter(q => q.difficulty === (context.latestIsCorrect ? 'Hard' : 'Easy'));
+    if (candidates.length === 0) candidates = phaseFiltered;
 
-    // Pick the first valid candidate
     return candidates[0] || null;
 }

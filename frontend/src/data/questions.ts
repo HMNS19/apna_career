@@ -1,99 +1,56 @@
 import { Question } from '../types';
 
 export const mockQuestions: Question[] = [
+    // L1-L2 (Screening Phase)
     {
-        id: 'q1',
-        domain: 'DSA',
-        concept: 'Arrays',
-        difficulty: 'Easy',
-        bloomLevel: 'Understand',
-        attribute: 'Problem solving',
-        type: 'MCQ',
-        content: 'Which data structure stores elements in contiguous memory locations?',
-        options: ['Linked List', 'Array', 'Tree', 'Graph'],
-        correctAnswer: 'Array'
+        id: 'q1', domain: 'DSA', concept: 'Arrays', difficulty: 'Easy', bloomLevel: 'Remember', attribute: 'PO1', type: 'MCQ',
+        content: 'Which data structure stores elements in contiguous memory locations?', options: ['Linked List', 'Array', 'Tree', 'Graph'], correctAnswer: 'Array'
     },
     {
-        id: 'q2',
-        domain: 'Web Development',
-        concept: 'DOM',
-        difficulty: 'Medium',
-        bloomLevel: 'Apply',
-        attribute: 'Design',
-        type: 'MCQ',
-        content: 'Which method is used to attach an event handler to a document element safely?',
-        options: ['attachEvent', 'addEventListener', 'onEvent', 'listen'],
-        correctAnswer: 'addEventListener'
+        id: 'q2', domain: 'Web Development', concept: 'HTML', difficulty: 'Easy', bloomLevel: 'Understand', attribute: 'PO1', type: 'MCQ',
+        content: 'What is the purpose of the <body> tag?', options: ['Metadata', 'Scripts', 'Visible Content', 'Styling'], correctAnswer: 'Visible Content'
     },
     {
-        id: 'q3',
-        domain: 'Machine Learning',
-        concept: 'Overfitting',
-        difficulty: 'Medium',
-        bloomLevel: 'Apply',
-        attribute: 'Analysis',
-        type: 'MCQ',
-        content: 'Which technique is primarily used to prevent overfitting in neural networks?',
-        options: ['Gradient Descent', 'Dropout', 'Backpropagation', 'Activation Functions'],
-        correctAnswer: 'Dropout'
+        id: 'q3', domain: 'Machine Learning', concept: 'Supervised Learning', difficulty: 'Easy', bloomLevel: 'Understand', attribute: 'PO1', type: 'MCQ',
+        content: 'Which of these is explicitly given in supervised learning?', options: ['Labeled Data', 'Random Noise', 'Clustered Data', 'Priors'], correctAnswer: 'Labeled Data'
     },
     {
-        id: 'q4',
-        domain: 'Systems',
-        concept: 'Caching',
-        difficulty: 'Medium',
-        bloomLevel: 'Understand',
-        attribute: 'Design',
-        type: 'MCQ',
-        content: 'What is the main purpose of a cache in system architecture?',
-        options: ['Persistent storage', 'To reduce data access latency', 'Network routing', 'Security encryption'],
-        correctAnswer: 'To reduce data access latency'
+        id: 'q4', domain: 'Systems', concept: 'Ports', difficulty: 'Easy', bloomLevel: 'Remember', attribute: 'PO1', type: 'MCQ',
+        content: 'Which port is historically used for HTTP traffic?', options: ['443', '22', '80', '21'], correctAnswer: '80'
+    },
+
+    // L3-L4 (Expansion Phase)
+    {
+        id: 'q5', domain: 'DSA', concept: 'Graphs', difficulty: 'Medium', bloomLevel: 'Apply', attribute: 'PO2', type: 'MCQ',
+        content: 'Which search algorithm uses a queue?', options: ['DFS', 'BFS', 'Binary Search', 'A*'], correctAnswer: 'BFS'
     },
     {
-        id: 'q5',
-        domain: 'DSA',
-        concept: 'Graphs',
-        difficulty: 'Hard',
-        bloomLevel: 'Analyze',
-        attribute: 'Problem solving',
-        type: 'MCQ',
-        content: 'In Dijkstra\'s algorithm, what data structure is best used to extract the minimum distance node efficiently?',
-        options: ['Stack', 'Queue', 'Priority Queue / Min Heap', 'Linked List'],
-        correctAnswer: 'Priority Queue / Min Heap'
+        id: 'q6', domain: 'Web Development', concept: 'React State', difficulty: 'Medium', bloomLevel: 'Analyze', attribute: 'PO5', type: 'MCQ',
+        content: 'Why should you avoid mutating state directly in React?', options: ['Security vulnerability', 'Breaks reconciliation', 'Faster performance', 'Saves memory'], correctAnswer: 'Breaks reconciliation'
     },
     {
-        id: 'q6',
-        domain: 'Web Development',
-        concept: 'Performance',
-        difficulty: 'Hard',
-        bloomLevel: 'Analyze',
-        attribute: 'Analysis',
-        type: 'MCQ',
-        content: 'Why does adding `<script defer>` improve page load performance compared to a standard `<script>` tag in the head?',
-        options: ['It executes the script synchronously before parsing HTML.', 'It downloads the script in parallel and executes it after HTML parsing.', 'It stops HTML parsing completely until downloaded.', 'It caches the script permanently in the browser.'],
-        correctAnswer: 'It downloads the script in parallel and executes it after HTML parsing.'
+        id: 'q7', domain: 'Machine Learning', concept: 'Overfitting', difficulty: 'Hard', bloomLevel: 'Analyze', attribute: 'PO2', type: 'MCQ',
+        content: 'To correct high variance in a model, one could:', options: ['Remove regularizers', 'Increase model complexity', 'Add Dropout / L2', 'Increase epochs'], correctAnswer: 'Add Dropout / L2'
+    },
+    {
+        id: 'q8', domain: 'Systems', concept: 'Caching', difficulty: 'Medium', bloomLevel: 'Apply', attribute: 'PO3', type: 'MCQ',
+        content: 'In LRU cache design, what data structure guarantees O(1) eviction?', options: ['Linked List + HashMap', 'Binary Tree', 'Stack', 'Array'], correctAnswer: 'Linked List + HashMap'
+    },
+
+    // L5-L6 (Mastery/Advanced Phase)
+    {
+        id: 'q9', domain: 'DSA', concept: 'Dynamic Programming', difficulty: 'Hard', bloomLevel: 'Evaluate', attribute: 'PO3', type: 'Subjective',
+        content: 'Design an algorithm to find the longest palindromic substring optimally. Evaluate its time complexity based on space trade-offs.'
+    },
+    {
+        id: 'q10', domain: 'Systems', concept: 'Microservices', difficulty: 'Hard', bloomLevel: 'Create', attribute: 'PO3', type: 'Subjective',
+        content: 'Design a distributed rate limiter for a global API gateway serving 10M RPM.'
     }
 ];
 
 export const personalityQuestions = [
-    {
-        id: 'p1',
-        text: 'When approaching a new problem, I prefer to break it down into logical steps before acting.',
-        trait: 'analytical' as const
-    },
-    {
-        id: 'p2',
-        text: 'I enjoy designing intuitive interfaces and focusing on the aesthetic feel of a project.',
-        trait: 'creative' as const
-    },
-    {
-        id: 'p3',
-        text: 'I care more about how the system scales under load than making it look pretty.',
-        trait: 'structured' as const
-    },
-    {
-        id: 'p4',
-        text: 'I love trying out new frameworks and building tangible prototypes fast.',
-        trait: 'practical' as const
-    }
+    { id: 'p1', text: 'I break problems into logical steps before acting.', trait: 'analytical' as const },
+    { id: 'p2', text: 'I enjoy designing intuitive aesthetics.', trait: 'creative' as const },
+    { id: 'p3', text: 'I care more about how the system scales than looks.', trait: 'structured' as const },
+    { id: 'p4', text: 'I love trying out new tangible prototypes fast.', trait: 'practical' as const }
 ];
